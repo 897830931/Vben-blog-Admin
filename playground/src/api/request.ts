@@ -55,7 +55,7 @@ function createRequestClient(baseURL: string) {
   }
 
   function formatToken(token: null | string) {
-    return token ? `Bearer ${token}` : null;
+    return token ? `${token}` : null;
   }
 
   // 请求头处理
@@ -76,7 +76,7 @@ function createRequestClient(baseURL: string) {
 
       const { code, data } = responseData;
 
-      if (status >= 200 && status < 400 && code === 0) {
+      if (status >= 200 && status < 400 && code === 1) {
         return data;
       }
       throw Object.assign({}, response, { response });
