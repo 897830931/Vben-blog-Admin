@@ -6,20 +6,27 @@ import { useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
-import { Button, message } from 'ant-design-vue';
+import { Button } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { getArticleList } from '#/api';
 
 const router = useRouter();
 interface RowType {
-  category: string;
-  content: string;
-  cover: string;
+  category_id: string; // 分类
+  comment_count: null | number; // 评论数量
+  content: string; // 内容
+  cover: string; // 封面图
+  create_at: string; // 发布时间
   id: number | string;
-  time: string;
-  title: string;
-  viewCount: number;
+  is_featured: boolean | null; // 是否推荐
+  like_count: null | number; // 点赞数
+  status: 'actived' | 'draft' | 'published'; // 状态
+  summary: string; // 摘要
+  tag: string[]; // 标签
+  title: string; // 标题
+  update_at: string; // 更新时间
+  view_count: null | number; // 浏览数量
 }
 // 获取文章
 const getData = async (page: any, searchInfo: any) => {
@@ -42,7 +49,6 @@ const formOptions: VbenFormProps = {
   schema: [
     {
       component: 'Input',
-      defaultValue: '1',
       fieldName: 'title',
       label: '标题',
     },
@@ -67,8 +73,48 @@ const formOptions: VbenFormProps = {
         ],
         placeholder: '请选择',
       },
-      fieldName: 'type',
+      fieldName: 'category_id',
       label: '类型',
+    },
+    {
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: [
+          {
+            label: '已发布',
+            value: 'published',
+          },
+          {
+            label: '草稿',
+            value: 'draft',
+          },
+          {
+            label: '已归档',
+            value: 'actived',
+          },
+        ],
+        placeholder: '请选择',
+      },
+      fieldName: 'status',
+      label: '状态',
+    },
+    {
+      component: 'RadioGroup',
+      componentProps: {
+        options: [
+          {
+            label: '是',
+            value: 1,
+          },
+          {
+            label: '否',
+            value: 0,
+          },
+        ],
+      },
+      fieldName: 'is_featured',
+      label: '是否推荐',
     },
   ],
   // 控制表单是否显示折叠按钮
@@ -90,15 +136,21 @@ const gridOptions: VxeGridProps<RowType> = {
     {
       align: 'left',
       field: 'title',
-      minWidth: 200,
-      showOverflow: true,
+      minWidth: 100,
       title: '标题',
     },
-    { field: 'category', title: '分类' },
     { cellRender: { name: 'CellImage' }, field: 'cover', title: '封面' },
-    { field: 'content', title: '详情' },
-    { field: 'viewCount', sortable: true, sortType: 'number', title: '浏览量' },
-    { field: 'time', title: '发布时间' },
+    { field: 'summary', showOverflow: true, title: '摘要' },
+    { field: 'category_id', title: '分类' },
+    { field: 'status', title: '状态' },
+    { field: 'is_featured', title: '是否推荐' },
+    {
+      field: 'view_count',
+      sortable: true,
+      sortType: 'number',
+      title: '浏览量',
+    },
+    { field: 'create_at', title: '发布时间' },
     { slots: { default: 'action' }, title: '操作' },
   ],
   height: 'auto',
@@ -117,9 +169,6 @@ const gridOptions: VxeGridProps<RowType> = {
 };
 
 const [Grid, gridApi] = useVbenVxeGrid({ formOptions, gridOptions });
-function hasEditStatus(row: RowType) {
-  return gridApi.grid?.isEditByRow(row);
-}
 
 function editRowEvent(row: RowType) {
   router.push({
@@ -129,19 +178,7 @@ function editRowEvent(row: RowType) {
     },
   });
 }
-
-async function saveRowEvent(row: RowType) {
-  await gridApi.grid?.clearEdit();
-
-  gridApi.setLoading(true);
-  setTimeout(() => {
-    gridApi.setLoading(false);
-    message.success({
-      content: `保存成功！category=${row.category}`,
-    });
-  }, 600);
-}
-const cancelRowEvent = (_row: RowType) => {
+const deleteRowEvent = (_row: RowType) => {
   gridApi.grid?.clearEdit();
 };
 </script>
@@ -150,13 +187,8 @@ const cancelRowEvent = (_row: RowType) => {
   <Page auto-content-height>
     <Grid>
       <template #action="{ row }">
-        <template v-if="hasEditStatus(row)">
-          <Button type="link" @click="saveRowEvent(row)">保存</Button>
-          <Button type="link" @click="cancelRowEvent(row)">取消</Button>
-        </template>
-        <template v-else>
-          <Button type="link" @click="editRowEvent(row)">编辑</Button>
-        </template>
+        <Button type="link" @click="editRowEvent(row)">编辑</Button>
+        <Button type="link" @click="deleteRowEvent(row)">删除</Button>
       </template>
     </Grid>
   </Page>
