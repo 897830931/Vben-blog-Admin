@@ -2,6 +2,8 @@
 import type { VbenFormProps } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { useRouter } from 'vue-router';
+
 import { Page } from '@vben/common-ui';
 
 import { Button, message } from 'ant-design-vue';
@@ -9,6 +11,7 @@ import { Button, message } from 'ant-design-vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { getArticleList } from '#/api';
 
+const router = useRouter();
 interface RowType {
   category: string;
   content: string;
@@ -119,7 +122,12 @@ function hasEditStatus(row: RowType) {
 }
 
 function editRowEvent(row: RowType) {
-  gridApi.grid?.setEditRow(row);
+  router.push({
+    path: '/article/edit',
+    query: {
+      id: row.id,
+    },
+  });
 }
 
 async function saveRowEvent(row: RowType) {
