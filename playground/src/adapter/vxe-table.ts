@@ -32,7 +32,7 @@ setupVbenVxeTable({
           showResponseMsg: false,
         },
         round: true,
-        showOverflow: true,
+        // showOverflow: true,
         size: 'small',
       },
     });
@@ -41,7 +41,13 @@ setupVbenVxeTable({
     vxeUI.renderer.add('CellImage', {
       renderTableDefault(_renderOpts, params) {
         const { column, row } = params;
-        return h(Image, { src: row[column.field] });
+        return h('div', { class: 'w-full h-full p-2' }, [
+          h(Image, {
+            height: '120px',
+            src: row[column.field],
+            width: '120px',
+          }),
+        ]);
       },
     });
 
