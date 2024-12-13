@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
@@ -7,10 +7,13 @@ import { Page } from '@vben/common-ui';
 import { message } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
+import { getArticleDetail } from '#/api/article';
 import MarkdownEdit from '#/components/MarkdownEdit/index.vue';
+import Upload from '#/components/Upload/index.vue';
 
 const route = useRoute();
-const articleId = ref(route.query.id);
+// 定义 articleId，并标注为可能为字符串或 undefined
+const articleId = ref<string | undefined>(route.query.id as string | undefined);
 const title = ref(articleId.value ? '编辑文章' : '新增文章');
 
 const [ArticleForm, formApi] = useVbenForm({
@@ -104,20 +107,22 @@ function onSubmit(values: Record<string, any>) {
     content: `form values: ${JSON.stringify(values)}`,
   });
 }
+onMounted(async () => {
+  if (articleId.value) {
+    const res = await getArticleDetail(articleId.value);
+    formApi.setValues(res);
+  }
+});
 </script>
 
 <template>
   <Page :title="title" auto-content-height>
     <ArticleForm>
-      <template #content>
-        <MarkdownEdit
-          class="w-full"
-          @change="
-            (value) => {
-              formApi.setFieldValue('content', value);
-            }
-          "
-        />
+      <template #content="contentField">
+        <MarkdownEdit class="w-full" v-bind="contentField" />
+      </template>
+      <template #cover="coverField">
+        <Upload class="w-full" upload-type="single" v-bind="coverField" />
       </template>
     </ArticleForm>
   </Page>

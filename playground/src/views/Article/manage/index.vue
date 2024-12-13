@@ -17,7 +17,7 @@ interface RowType {
   comment_count: null | number; // 评论数量
   content: string; // 内容
   cover: string; // 封面图
-  create_at: string; // 发布时间
+  created_at: string; // 发布时间
   id: number | string;
   is_featured: boolean | null; // 是否推荐
   like_count: null | number; // 点赞数
@@ -54,7 +54,7 @@ const formOptions: VbenFormProps = {
     },
     {
       component: 'DatePicker',
-      fieldName: 'date',
+      fieldName: 'created_at',
       label: '发布时间',
     },
     {
@@ -150,7 +150,7 @@ const gridOptions: VxeGridProps<RowType> = {
       sortType: 'number',
       title: '浏览量',
     },
-    { field: 'create_at', title: '发布时间' },
+    { field: 'created_at', title: '发布时间' },
     { slots: { default: 'action' }, title: '操作' },
   ],
   height: 'auto',

@@ -28,25 +28,23 @@ const pluginsList = [
 // 响应式状态（用于扩展功能）
 const state = reactive({
   plugins: markRaw(pluginsList),
-  value: '',
-  zh: zhHans,
+  zh: zhHans, // 国际化语言
 });
 
 // 解构需要的状态
-const { plugins, value, zh } = toRefs(state);
+const { plugins, zh } = toRefs(state);
 
 // 输入变更事件
 const handleInput = (val) => {
-  value.value = val;
   emit('change', val); // 通知父组件输入变更
 };
 </script>
 
 <template>
   <Editor
+    v-bind="$attrs"
     :locale="zh"
     :plugins="plugins"
-    :value="value"
     @change="handleInput"
   />
 </template>
