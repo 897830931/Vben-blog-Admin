@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import type { UploadProps } from 'ant-design-vue';
 
-import { ref, useAttrs } from 'vue';
+import { ref } from 'vue';
 
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import { Upload as aUpload, message } from 'ant-design-vue';
 
 import { upload } from '#/api/common';
 
+const emit = defineEmits(['update:fileList']);
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
   const reader = new FileReader();
   reader.addEventListener('load', () => callback(reader.result as string));
@@ -16,28 +17,24 @@ function getBase64(img: Blob, callback: (base64Url: string) => void) {
 const fileList = ref([]);
 const loading = ref<boolean>(false);
 const imageUrl = ref<string>('');
-const attrs = useAttrs();
 const handleUpload = async (info: any) => {
   // 从 UploadChangeParam 中获取实际的文件对象
   const file = info.file; // 获取实际文件对象
   if (!file) {
-    console.error('未选择文件');
     return;
   }
-  try {
-    // 使用 requestClient 发送请求，设置 POST 方法，传递 FormData 作为请求体
-    const response = await upload({
-      file,
-    });
-    attrs.value = [];
-    getBase64(file, (base64Url) => {
-      imageUrl.value = base64Url;
-    });
-    return response;
-  } catch (error) {
-    console.error('上传失败:', error);
-    throw error;
-  }
+
+  // 使用 requestClient 发送请求，设置 POST 方法，传递 FormData 作为请求体
+  const response = await upload({
+    file,
+  });
+
+  fileList.value.push(response);
+  emit('update:fileList', fileList.value);
+  getBase64(file, (base64Url) => {
+    imageUrl.value = base64Url;
+  });
+  return response;
 };
 
 const beforeUpload = async (file: UploadProps['fileList'][number]) => {
@@ -55,7 +52,6 @@ const beforeUpload = async (file: UploadProps['fileList'][number]) => {
 <template>
   <div>
     <a-upload
-      v-model:file-list="fileList"
       :before-upload="beforeUpload"
       :custom-request="handleUpload"
       :show-upload-list="false"

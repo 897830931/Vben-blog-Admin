@@ -37,7 +37,7 @@ const getData = async (page: any, searchInfo: any) => {
   };
   const res = await getArticleList(params);
   return {
-    total: 100,
+    total: res.totalCount,
     items: res.list,
     list: res.list,
   };

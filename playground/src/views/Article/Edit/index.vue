@@ -4,8 +4,6 @@ import { useRoute } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
-import { message } from 'ant-design-vue';
-
 import { useVbenForm } from '#/adapter/form';
 import { getArticleDetail } from '#/api/article';
 import MarkdownEdit from '#/components/MarkdownEdit/index.vue';
@@ -102,11 +100,7 @@ const [ArticleForm, formApi] = useVbenForm({
   wrapperClass: 'grid-cols-2',
 });
 
-function onSubmit(values: Record<string, any>) {
-  message.success({
-    content: `form values: ${JSON.stringify(values)}`,
-  });
-}
+function onSubmit() {}
 onMounted(async () => {
   if (articleId.value) {
     const res = await getArticleDetail(articleId.value);
@@ -122,7 +116,7 @@ onMounted(async () => {
         <MarkdownEdit class="w-full" v-bind="contentField" />
       </template>
       <template #cover="coverField">
-        <Upload class="w-full" upload-type="single" v-bind="coverField" />
+        <Upload class="w-full" v-bind="coverField" />
       </template>
     </ArticleForm>
   </Page>
