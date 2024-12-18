@@ -167,9 +167,14 @@ const gridOptions: VxeGridProps<RowType> = {
   },
   rowClassName: 'h-24',
 };
-
+// 表单配置
 const [Grid, gridApi] = useVbenVxeGrid({ formOptions, gridOptions });
-
+// 新增
+const handleCreate = () => {
+  router.push({
+    path: '/article/edit',
+  });
+};
 function editRowEvent(row: RowType) {
   router.push({
     path: '/article/edit',
@@ -186,6 +191,9 @@ const deleteRowEvent = (_row: RowType) => {
 <template>
   <Page auto-content-height>
     <Grid>
+      <template #toolbar-actions>
+        <Button class="ml-2" type="primary" @click="handleCreate">新增</Button>
+      </template>
       <template #action="{ row }">
         <Button type="link" @click="editRowEvent(row)">编辑</Button>
         <Button type="link" @click="deleteRowEvent(row)">删除</Button>

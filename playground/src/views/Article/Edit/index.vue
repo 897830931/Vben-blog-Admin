@@ -4,10 +4,11 @@ import { useRoute } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
-import { useVbenForm } from '#/adapter/form';
+import { useVbenForm, z } from '#/adapter/form';
 import { getArticleDetail } from '#/api/article';
 import MarkdownEdit from '#/components/MarkdownEdit/index.vue';
-import Upload from '#/components/Upload/index.vue';
+import TagInput from '#/components/TagInput/index.vue';
+import Upload from '#/components/Upload/image.vue';
 
 const route = useRoute();
 // 定义 articleId，并标注为可能为字符串或 undefined
@@ -31,6 +32,7 @@ const [ArticleForm, formApi] = useVbenForm({
       },
       fieldName: 'title',
       label: '标题',
+      rules: 'required',
     },
     {
       component: 'Select',
@@ -44,35 +46,7 @@ const [ArticleForm, formApi] = useVbenForm({
       },
       fieldName: 'category_id',
       label: '分类',
-    },
-    {
-      component: 'Input',
-      fieldName: 'content',
-      formItemClass: 'col-span-2 items-baseline',
-      label: '详情',
-    },
-
-    {
-      component: 'Textarea',
-      componentProps: {
-        placeholder: '请输入文章摘要',
-        rows: 4,
-      },
-      fieldName: 'summary',
-      label: '摘要',
-    },
-    {
-      component: 'Upload',
-      componentProps: {
-        fileList: [],
-      },
-      fieldName: 'cover',
-      label: '封面图',
-    },
-    {
-      component: 'Input',
-      fieldName: 'tags',
-      label: '标签',
+      rules: 'required',
     },
     {
       component: 'Switch',
@@ -82,6 +56,42 @@ const [ArticleForm, formApi] = useVbenForm({
       },
       fieldName: 'is_featured',
       label: '推荐文章',
+      rules: 'required',
+    },
+    {
+      component: 'Input',
+      fieldName: 'content',
+      formItemClass: 'col-span-4 items-baseline',
+      label: '详情',
+      rules: 'required',
+    },
+
+    {
+      component: 'Textarea',
+      componentProps: {
+        placeholder: '请输入文章摘要',
+        rows: 4,
+      },
+      fieldName: 'summary',
+      formItemClass: 'col-span-2 items-baseline',
+      label: '摘要',
+      rules: 'required',
+    },
+    {
+      component: 'Upload',
+      componentProps: {
+        fileList: [],
+      },
+      fieldName: 'cover',
+      formItemClass: 'col-span-2 items-baseline',
+      label: '封面图',
+      rules: z.array(z.string()).min(1, '至少上传一张封面'),
+    },
+    {
+      component: 'Input',
+      fieldName: 'tags',
+      formItemClass: 'col-span-2 items-baseline',
+      label: '标签',
     },
     {
       component: 'Select',
@@ -95,12 +105,21 @@ const [ArticleForm, formApi] = useVbenForm({
       },
       fieldName: 'status',
       label: '状态',
+      rules: 'required',
     },
   ],
-  wrapperClass: 'grid-cols-2',
+  wrapperClass: 'grid-cols-4',
 });
-
-function onSubmit() {}
+// 提交函数
+function onSubmit(values: any) {
+  const params = {
+    ...values,
+    cover: values.cover?.map((item: any) => item.response) ?? [],
+  };
+  // eslint-disable-next-line no-console
+  console.log(params);
+  return params;
+}
 onMounted(async () => {
   if (articleId.value) {
     const res = await getArticleDetail(articleId.value);
@@ -117,6 +136,9 @@ onMounted(async () => {
       </template>
       <template #cover="coverField">
         <Upload class="w-full" v-bind="coverField" />
+      </template>
+      <template #tags="tags">
+        <TagInput v-bind="tags" />
       </template>
     </ArticleForm>
   </Page>
