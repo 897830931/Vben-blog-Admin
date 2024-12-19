@@ -85,7 +85,7 @@ const [ArticleForm, formApi] = useVbenForm({
       fieldName: 'cover',
       formItemClass: 'col-span-2 items-baseline',
       label: '封面图',
-      rules: z.array(z.string()).min(1, '至少上传一张封面'),
+      rules: z.array(z.object({})).min(1, '至少上传一张封面'),
     },
     {
       component: 'Input',

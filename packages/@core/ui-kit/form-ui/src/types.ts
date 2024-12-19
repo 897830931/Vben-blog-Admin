@@ -169,6 +169,10 @@ export interface FormCommonConfig {
    */
   formItemClass?: string;
   /**
+   * 所有表单项的样式
+   */
+  formItemsClass?: string;
+  /**
    * 隐藏所有表单项label
    * @default false
    */
@@ -276,6 +280,11 @@ export interface FormRenderProps<
    * 表单实例
    */
   form?: FormContext<GenericObject>;
+  /**
+   * 所有表单项的控件样式
+   * @default "pb-4"
+   */
+  formItemsClass?: string;
   /**
    * 表单项布局
    */

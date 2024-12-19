@@ -46,6 +46,7 @@ const getData = async (page: any, searchInfo: any) => {
 const formOptions: VbenFormProps = {
   // 默认展开
   collapsed: false,
+  formItemsClass: 'pb-4',
   schema: [
     {
       component: 'Input',

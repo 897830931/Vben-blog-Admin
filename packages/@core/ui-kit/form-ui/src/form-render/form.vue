@@ -27,6 +27,7 @@ const props = withDefaults(
   {
     collapsedRows: 1,
     commonConfig: () => ({}),
+    formItemsClass: 'pb-4',
     globalCommonConfig: () => ({}),
     showCollapseButton: false,
     wrapperClass: 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3',
@@ -93,6 +94,7 @@ const computedSchema = computed(
       emptyStateValue = undefined,
       formFieldProps = {},
       formItemClass = '',
+      formItemsClass = '',
       hideLabel = false,
       hideRequiredMark = false,
       labelClass = '',
@@ -112,6 +114,7 @@ const computedSchema = computed(
         disabled,
         disabledOnChangeListener,
         emptyStateValue,
+        formItemsClass,
         hideLabel,
         hideRequiredMark,
         labelWidth,
@@ -146,7 +149,7 @@ const computedSchema = computed(
         </div> -->
         <FormField
           v-bind="cSchema"
-          :class="cSchema.formItemClass"
+          :class="cSchema.formItemClass || formItemsClass"
           :rules="cSchema.rules"
         >
           <template #default="slotProps">

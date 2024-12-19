@@ -21,6 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
   collapsed: false,
   collapsedRows: 1,
   commonConfig: () => ({}),
+  formItemsClass: 'pb-4',
   handleReset: undefined,
   handleSubmit: undefined,
   layout: 'horizontal',

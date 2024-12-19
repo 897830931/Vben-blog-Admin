@@ -10,7 +10,7 @@ import {
   errorMessageResponseInterceptor,
   RequestClient,
 } from '@vben/request';
-import { useAccessStore } from '@vben/stores';
+import { resetAllStores, useAccessStore } from '@vben/stores';
 
 import { message } from 'ant-design-vue';
 
@@ -49,7 +49,9 @@ function createRequestClient(baseURL: string) {
   async function doRefreshToken() {
     const accessStore = useAccessStore();
     const resp = await refreshTokenApi();
-    const newToken = resp.data;
+    // eslint-disable-next-line no-console
+    console.log(resp);
+    const newToken = resp.data.accessToken;
     accessStore.setAccessToken(newToken);
     return newToken;
   }
@@ -75,7 +77,9 @@ function createRequestClient(baseURL: string) {
       const { data: responseData, status } = response;
 
       const { code, data } = responseData;
-
+      if (status === 401 && code === 1) {
+        resetAllStores();
+      }
       if (status >= 200 && status < 400 && code === 1) {
         return data;
       }

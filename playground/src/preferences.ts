@@ -8,6 +8,8 @@ import { defineOverridesPreferences } from '@vben/preferences';
 export const overridesPreferences = defineOverridesPreferences({
   // overrides
   app: {
+    enableRefreshToken: true,
+    loginExpiredMode: 'modal',
     name: import.meta.env.VITE_APP_TITLE,
   },
   logo: {

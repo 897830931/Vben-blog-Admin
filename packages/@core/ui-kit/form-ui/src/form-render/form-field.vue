@@ -49,6 +49,7 @@ const {
 
 const { componentBindEventMap, componentMap, isVertical } = useFormContext();
 const formRenderProps = injectRenderFormProps();
+const { formItemsClass } = formRenderProps;
 const values = useFormValues();
 const errors = useFieldError(fieldName);
 const fieldComponentRef = useTemplateRef<HTMLInputElement>('fieldComponentRef');
@@ -272,12 +273,15 @@ function autofocus() {
   >
     <FormItem
       v-show="isShow"
-      :class="{
-        'form-valid-error': isInValid,
-        'flex-col': isVertical,
-        'flex-row items-center': !isVertical,
-      }"
-      class="flex pb-6"
+      :class="[
+        {
+          'form-valid-error': isInValid,
+          'flex-col': isVertical,
+          'flex-row items-center': !isVertical,
+        },
+        cn(formItemsClass) || 'pb-6',
+      ]"
+      class="flex"
       v-bind="$attrs"
     >
       <FormLabel
