@@ -80,6 +80,7 @@ export const useAuthStore = defineStore('auth', () => {
       await logoutApi();
     } catch {
       // 不做任何处理
+      resetAllStores();
     }
 
     resetAllStores();

@@ -6,7 +6,7 @@ import type {
   WorkbenchTrendItem,
 } from '@vben/common-ui';
 
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import {
@@ -17,9 +17,12 @@ import {
   WorkbenchTodo,
   WorkbenchTrends,
 } from '@vben/common-ui';
+import { Pencil } from '@vben/icons';
 import { preferences } from '@vben/preferences';
 import { useUserStore } from '@vben/stores';
 import { openWindow } from '@vben/utils';
+
+import { getProjectList } from '#/api';
 
 import AnalyticsVisitsSource from '../analytics/analytics-visits-source.vue';
 
@@ -28,64 +31,15 @@ const userStore = useUserStore();
 // 这是一个示例数据，实际项目中需要根据实际情况进行调整
 // url 也可以是内部路由，在 navTo 方法中识别处理，进行内部跳转
 // 例如：url: /dashboard/workspace
-const projectItems: WorkbenchProjectItem[] = [
-  {
-    color: '',
-    content: '不要等待机会，而要创造机会。',
-    date: '2021-04-01',
-    group: '开源组',
-    icon: 'carbon:logo-github',
-    title: 'Github',
-    url: 'https://github.com',
-  },
-  {
-    color: '#3fb27f',
-    content: '现在的你决定将来的你。',
-    date: '2021-04-01',
-    group: '算法组',
-    icon: 'ion:logo-vue',
-    title: 'Vue',
-    url: 'https://vuejs.org',
-  },
-  {
-    color: '#e18525',
-    content: '没有什么才能比努力更重要。',
-    date: '2021-04-01',
-    group: '上班摸鱼',
-    icon: 'ion:logo-html5',
-    title: 'Html5',
-    url: 'https://developer.mozilla.org/zh-CN/docs/Web/HTML',
-  },
-  {
-    color: '#bf0c2c',
-    content: '热情和欲望可以突破一切难关。',
-    date: '2021-04-01',
-    group: 'UI',
-    icon: 'ion:logo-angular',
-    title: 'Angular',
-    url: 'https://angular.io',
-  },
-  {
-    color: '#00d8ff',
-    content: '健康的身体是实现目标的基石。',
-    date: '2021-04-01',
-    group: '技术牛',
-    icon: 'bx:bxl-react',
-    title: 'React',
-    url: 'https://reactjs.org',
-  },
-  {
-    color: '#EBD94E',
-    content: '路是走出来的，而不是空想出来的。',
-    date: '2021-04-01',
-    group: '架构组',
-    icon: 'ion:logo-javascript',
-    title: 'Js',
-    url: 'https://developer.mozilla.org/zh-CN/docs/Web/JavaScript',
-  },
-];
 
-// 同样，这里的 url 也可以使用以 http 开头的外部链接
+const projectItems = ref<WorkbenchProjectItem[]>([]);
+
+onMounted(async () => {
+  // 假设 getProjectList 返回的是 WorkbenchProjectItem[] 类型的列表
+  const res = await getProjectList();
+  projectItems.value = res.list; // 类型推断应该没问题，因为 res.list 是 WorkbenchProjectItem[]
+});
+// 同样，这里的 url 也可以使用以 http 开头的外部链接 快捷栏
 const quickNavItems: WorkbenchQuickNavItem[] = [
   {
     color: '#1fdaca',
@@ -95,14 +49,14 @@ const quickNavItems: WorkbenchQuickNavItem[] = [
   },
   {
     color: '#bf0c2c',
-    icon: 'ion:grid-outline',
-    title: '仪表盘',
-    url: '/dashboard',
+    icon: Pencil,
+    title: '写文章',
+    url: '/article/edit',
   },
   {
     color: '#e18525',
     icon: 'ion:layers-outline',
-    title: '组件',
+    title: '待办管理',
     url: '/demos/features/icons',
   },
   {
@@ -124,7 +78,7 @@ const quickNavItems: WorkbenchQuickNavItem[] = [
     url: '/analytics',
   },
 ];
-
+// 待办事项 记录建设计划
 const todoItems = ref<WorkbenchTodoItem[]>([
   {
     completed: false,
@@ -157,6 +111,7 @@ const todoItems = ref<WorkbenchTodoItem[]>([
     title: '修复UI显示问题',
   },
 ]);
+// 最新评论
 const trendItems: WorkbenchTrendItem[] = [
   {
     avatar: 'svg:avatar-1',
@@ -247,7 +202,7 @@ function navTo(nav: WorkbenchProjectItem | WorkbenchQuickNavItem) {
     <div class="mt-5 flex flex-col lg:flex-row">
       <div class="mr-4 w-full lg:w-3/5">
         <WorkbenchProject :items="projectItems" title="项目" @click="navTo" />
-        <WorkbenchTrends :items="trendItems" class="mt-5" title="最新动态" />
+        <WorkbenchTrends :items="trendItems" class="mt-5" title="最新评论" />
       </div>
       <div class="w-full lg:w-2/5">
         <WorkbenchQuickNav
@@ -256,7 +211,7 @@ function navTo(nav: WorkbenchProjectItem | WorkbenchQuickNavItem) {
           title="快捷导航"
           @click="navTo"
         />
-        <WorkbenchTodo :items="todoItems" class="mt-5" title="待办事项" />
+        <WorkbenchTodo :items="todoItems" class="mt-5" title="待办建设计划" />
         <AnalysisChartCard class="mt-5" title="访问来源">
           <AnalyticsVisitsSource />
         </AnalysisChartCard>

@@ -44,6 +44,7 @@ export {
   Palette,
   PanelLeft,
   PanelRight,
+  Pencil,
   Pin,
   PinOff,
   RotateCw,
